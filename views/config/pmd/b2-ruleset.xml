@@ -45,6 +45,7 @@
     <rule ref="category/java/bestpractices.xml/UnusedPrivateField" />
     <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
     <rule ref="category/java/bestpractices.xml/UseTryWithResources" />
+    <rule ref="category/java/codestyle.xml/EmptyControlStatement" />
     <rule ref="category/java/codestyle.xml/LongVariable">
         <properties>
             <property name="minimum" value="30" />
