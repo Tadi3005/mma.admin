@@ -24,7 +24,7 @@ class AggregatePmdReportsTask extends DefaultTask {
         def xmlParser = new XmlParser()
 
         projectsFiles.each { it
-            println "inspecting ${it.path}"
+            println "Inspecting ${it.path}"
             def reportAsXml = xmlParser.parse(it)
 
             reportAsXml.file
