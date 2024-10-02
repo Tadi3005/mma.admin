@@ -3,12 +3,13 @@
  */
 package org.helmo.example.app;
 
-public class Program {
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
+import org.helmo.example.infrastructures.Repository;
+import org.helmo.example.views.View;
+
+public class Program {
     public static void main(String[] args) {
-        System.out.println(new Program().getGreeting());
+        View.greets();
+        Repository.greetsFromInfra();
     }
 }

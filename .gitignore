@@ -23,3 +23,7 @@ bin
 .idea
 *.iml
 out
+
+# logs file
+
+logs/*.log
