@@ -4,5 +4,5 @@
 package org.helmo.example.domains;
 
 public class Entity {
-	
+    
 }
