@@ -27,3 +27,4 @@ out
 # logs file
 
 logs/*.log
+**/logs/*.log
