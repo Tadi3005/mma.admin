@@ -158,8 +158,7 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-	//FieldDeclaration[@Visibility!="private" and @Static="false"]
-	
+	//FieldDeclaration[@Visibility!="private" and @Static=false()]
 	]]>
                 </value>
             </property>
@@ -178,7 +177,7 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-	//FieldDeclaration[@Final="false" and @Static="true"]
+	//FieldDeclaration[@Final=false() and @Static=true()]
 	]]>
                 </value>
             </property>
