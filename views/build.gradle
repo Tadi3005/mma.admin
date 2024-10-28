@@ -6,4 +6,5 @@ plugins {
 
 dependencies {
      implementation project(':presentations')
+     implementation ("net.sf.jopt-simple:jopt-simple:5.0.4")
 }
