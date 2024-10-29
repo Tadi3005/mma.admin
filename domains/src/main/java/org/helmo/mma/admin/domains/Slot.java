@@ -3,13 +3,11 @@ package org.helmo.mma.admin.domains;
 import java.time.LocalTime;
 
 public class Slot {
-    private final LocalTime end;
-    private LocalTime start;
+    private final LocalTime start;
     private boolean free;
 
-    public Slot(LocalTime time, LocalTime plus) {
+    public Slot(LocalTime time) {
         this.start = time;
-        this.end = plus;
         this.free = true;
     }
 

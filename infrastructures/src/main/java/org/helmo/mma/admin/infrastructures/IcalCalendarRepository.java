@@ -60,7 +60,7 @@ public class IcalCalendarRepository implements CalendarRepository {
      * @return the list of events for the given date
      */
     @Override
-    public List<Event> getEvents(LocalDate date) {
+    public List<Event> findEventsAt(LocalDate date) {
         List<Event> events = new ArrayList<>();
         try (var reader = Files.newBufferedReader(Paths.get(path))) {
             CalendarBuilder builder = new CalendarBuilder();

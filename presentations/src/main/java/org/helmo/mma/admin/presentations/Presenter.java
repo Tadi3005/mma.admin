@@ -1,59 +1,99 @@
-/*
- * This source file is an example
- */
 package org.helmo.mma.admin.presentations;
 
 import org.helmo.mma.admin.domains.*;
+import org.helmo.mma.admin.domains.converter.Converter;
+import org.helmo.mma.admin.domains.converter.DateConverter;
+import org.helmo.mma.admin.domains.converter.IntConverter;
+import org.helmo.mma.admin.domains.converter.LocalTimeConverter;
+import org.helmo.mma.admin.domains.exception.ConversionException;
 import org.helmo.mma.admin.domains.repository.CalendarRepository;
 import org.helmo.mma.admin.domains.repository.RoomRepository;
 import org.helmo.mma.admin.domains.repository.UserRepository;
+import org.helmo.mma.admin.domains.reservation.ReservationRequest;
+import org.helmo.mma.admin.domains.reservation.ReservationService;
+import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class Presenter {
     private final CalendarRepository calendarRepository;
-    private final List<Room> rooms;
-    private final List<User> users;
     private final View view;
-    private final Map<Room, WorkingDateSlots> roomWorkingDateSlots;
+    private final Calendar calendar;
 
-    public Presenter(View view, CalendarRepository calendarRepository, RoomRepository roomRepository, UserRepository userRepository) {
+    public Presenter(View view, CalendarRepository calendarRepository, RoomRepository roomRepository, UserRepository userRepository, ReservationService reservationService) {
         this.view = view;
         this.calendarRepository = calendarRepository;
-        this.rooms = roomRepository.findAll();
-        this.users = userRepository.findAll();
-        this.roomWorkingDateSlots = new HashMap<>();
-    }
-
-    public void start() {
-        fillSlotsWithEventsAt(LocalDate.now());
-        loadDailyCalendar(LocalDate.now());
+        this.calendar = new Calendar(roomRepository.findAll(), userRepository.findAll(), reservationService);
     }
 
     /**
-     * Fill the slots of each room with the events at the given date
-     * @param date the date to get the events
+     * Start the program.
      */
-    public void fillSlotsWithEventsAt(LocalDate date) {
-        List<Event> events = calendarRepository.getEvents(date);
-        for (Room room : rooms) {
-            WorkingDateSlots workingDateSlots = new WorkingDateSlots(date);
-            workingDateSlots.initSlots();
-            for (Event event : events) {
-                if (event.hasSame(room)) {
-                    workingDateSlots.fillSlot(event);
-                }
+    public void start() {
+        loadCalendar(LocalDate.now());
+    }
+
+    private void loadCalendar(LocalDate date) {
+        calendar.loadCalendar(date, calendarRepository.findEventsAt(date));
+        displayDailyCalendar(date);
+    }
+
+    private void displayDailyCalendar(LocalDate date) {
+        view.display("Disponibilites des salles pour le " + date);
+        CalendarBuilder calendarBuilder = new CalendarBuilder(calendar.getRoomWorkingDateSlots());
+        view.display(calendarBuilder.getCalendar());
+        view.display("1. Changer de date");
+        view.display("2. Encodage d'un reservation");
+        view.display("3. Quitter");
+        handleMenu(date, askAndConvert("Votre choix: ", new IntConverter()));
+    }
+
+    private void handleMenu(LocalDate date, int choice) {
+        switch (choice) {
+            case 1 -> loadCalendar(askAndConvert("Entrez la nouvelle date (yyyy-MM-dd): ", new DateConverter()));
+            case 2 -> this.enterReservation(date);
+            case 3 -> view.display("Quitter");
+            default -> {
+                view.display("Choix invalide");
+                displayDailyCalendar(date);
             }
-            roomWorkingDateSlots.put(room, workingDateSlots);
         }
     }
 
-    private void loadDailyCalendar(LocalDate date) {
-        view.display("Disponnibilites des salles pour le " + date);
-        CalendarBuilder calendarBuilder = new CalendarBuilder(roomWorkingDateSlots);
-        view.display(calendarBuilder.getCalendar());
+    private void enterReservation(LocalDate date) {
+        ReservationRequest reservationRequest = new ReservationRequest(
+                view.ask("Entrez l'id de la salle: "),
+                view.ask("Entrez le matricule de l'utilisateur: "),
+                askAndConvert("Entrez le jour de la réservation (yyyy-MM-dd): ", new DateConverter()),
+                askAndConvert("Entrez l'heure de début (hh:mm): ", new LocalTimeConverter()),
+                askAndConvert("Entrez l'heure de fin (hh:mm): ", new LocalTimeConverter()),
+                view.ask("Entrez la description: "),
+                askAndConvert("Entrez le nombre de participants: ", new IntConverter())
+        );
+        ReservationStatus status = calendar.addReservation(reservationRequest);
+        if (status == ReservationStatus.SUCCESS) {
+            view.display("Reservation ajoutee avec succes");
+            //calendarRepository.addReservation(reservationRequest);
+        } else {
+            view.display("Impossible d'ajouter la réservation: " + status);
+        }
+        loadCalendar(date);
+    }
+
+    /**
+     * Generic method to prompt the user, convert input, and handle conversion errors.
+     * @param message The message to display to the user.
+     * @param converter The converter to apply to the user input.
+     * @param <T> The target type of the conversion.
+     * @return The converted value.
+     */
+    private <T> T askAndConvert(String message, Converter<T> converter) {
+        while (true) {
+            try {
+                return converter.convert(view.ask(message));
+            } catch (ConversionException e) {
+                view.displayError(e.getMessage());
+            }
+        }
     }
 }

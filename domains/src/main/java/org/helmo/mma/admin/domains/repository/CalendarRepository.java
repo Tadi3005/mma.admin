@@ -6,5 +6,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface CalendarRepository {
-    List<Event> getEvents(LocalDate date);
+    List<Event> findEventsAt(LocalDate date);
 }

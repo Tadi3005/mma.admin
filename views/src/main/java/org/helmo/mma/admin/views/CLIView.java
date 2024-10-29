@@ -51,7 +51,7 @@ public class CLIView implements View {
 
     @Override
     public String ask(String message) {
-        display(message);
+        System.out.print(message);
         return scanner.nextLine();
     }
 }
