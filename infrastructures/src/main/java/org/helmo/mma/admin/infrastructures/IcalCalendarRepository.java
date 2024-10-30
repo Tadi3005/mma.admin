@@ -73,7 +73,9 @@ public class IcalCalendarRepository implements CalendarRepository {
             for (Object component : calendar.getComponents()) {
                 if (component instanceof VEvent) {
                     Event event = eventMapper.toEvent((VEvent) component);
-                    events.add(event);
+                    if (event.date().isEqual(date)) {
+                        events.add(event);
+                    }
                 }
             }
         } catch (Exception e) {

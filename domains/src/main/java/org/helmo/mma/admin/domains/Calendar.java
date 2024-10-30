@@ -54,6 +54,10 @@ public class Calendar {
                     .filter(event -> event.hasSame(room))
                     .forEach(workingDateSlots::fillSlot);
 
+            events.stream()
+                    .filter(event -> event.hasSame(room))
+                    .forEach(room::addEvent);
+
             roomWorkingDateSlots.put(room, workingDateSlots);
         }
     }
@@ -64,7 +68,7 @@ public class Calendar {
      * @return the status of the reservation
      */
     public ReservationStatus addReservation(ReservationRequest reservationRequest) {
-        Room room = rooms.stream().filter(r -> r.id().equals(reservationRequest.idRoom())).findFirst().orElse(Room.NOT_FOUND);
+        Room room = rooms.stream().filter(r -> r.getId().equals(reservationRequest.idRoom())).findFirst().orElse(Room.NOT_FOUND);
         if (room == Room.NOT_FOUND) {
             return ReservationStatus.ROOM_NOT_FOUND;
         }

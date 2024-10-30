@@ -38,14 +38,13 @@ public class WorkingDateSlots implements Iterable<Slot> {
     }
 
     /**
-     * Fill a slot with an event if the slot is free
+     * Fill a slot with an event
      * @param event the event to fill the slot with
      */
     public void fillSlot(Event event) {
         slots.stream()
-                .filter(slot -> slot.isFree() && slot.getStart().equals(event.start()))
-                .findFirst()
-                .ifPresent(Slot::occupe);
+                .filter(slot -> slot.isBetween(event.start(), event.end()))
+                .forEach(Slot::occupe);
     }
 
     /**

@@ -29,7 +29,7 @@ public class CalendarBuilder {
 
     private void buildLineOf(Room room) {
         StringBuilder line = new StringBuilder();
-        line.append("\n|").append(room.id()).append("  |");
+        line.append("\n|").append(room.getId()).append("  |");
         WorkingDateSlots workingDateSlots = roomWorkingDateSlots.get(room);
         for (Slot slot : workingDateSlots.getSlots()) {
             line.append(slot.isFree() ? "   |" : " X |");
