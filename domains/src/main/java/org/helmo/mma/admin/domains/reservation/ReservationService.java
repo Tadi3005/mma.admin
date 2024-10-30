@@ -15,9 +15,10 @@ public class ReservationService {
         this.reservationValidators = reservationValidators;
     }
 
-    public ReservationStatus addReservation(ReservationRequest reservationRequest, Map<Room, WorkingDateSlots> roomWorkingDateSlots, List<User> users, List<Room> rooms) {
+    public ReservationStatus addReservation(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room) {
+        // TODO: Search WorkingDateSlots for the room peut etre faire ce traitement dans le calendar
         for (ReservationValidator reservationValidator : reservationValidators) {
-            ReservationStatus status = reservationValidator.validate(reservationRequest, roomWorkingDateSlots, users, rooms);
+            ReservationStatus status = reservationValidator.validate(reservationRequest, workingDateSlots, users, room);
             if (status != ReservationStatus.SUCCESS) {
                 return status;
             }

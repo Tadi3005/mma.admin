@@ -7,13 +7,16 @@ import org.helmo.mma.admin.domains.reservation.ReservationRequest;
 import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.util.List;
+import java.util.Map;
 
-public class RoomAvailabilityValidator implements ReservationValidator {
+public class UserIdValidator implements ReservationValidator {
     @Override
     public ReservationStatus validate(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room) {
-        if (workingDateSlots.isAvailable(reservationRequest.start(), reservationRequest.end())) {
-            return ReservationStatus.SUCCESS;
+        for (User user : users) {
+            if (user.matricule().equals(reservationRequest.matriculeUser())) {
+                return ReservationStatus.SUCCESS;
+            }
         }
-        return ReservationStatus.ROOM_NOT_AVAILABLE;
+        return ReservationStatus.USER_NOT_FOUND;
     }
 }

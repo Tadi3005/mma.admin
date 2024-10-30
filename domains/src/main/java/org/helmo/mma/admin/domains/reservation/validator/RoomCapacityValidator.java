@@ -8,12 +8,12 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.util.List;
 
-public class RoomAvailabilityValidator implements ReservationValidator {
+public class RoomCapacityValidator implements ReservationValidator {
     @Override
     public ReservationStatus validate(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room) {
-        if (workingDateSlots.isAvailable(reservationRequest.start(), reservationRequest.end())) {
-            return ReservationStatus.SUCCESS;
+        if (room.capacity() < reservationRequest.numberOfParticipants()) {
+            return ReservationStatus.ROOM_CAPACITY_NOT_ENOUGH;
         }
-        return ReservationStatus.ROOM_NOT_AVAILABLE;
+        return ReservationStatus.SUCCESS;
     }
 }

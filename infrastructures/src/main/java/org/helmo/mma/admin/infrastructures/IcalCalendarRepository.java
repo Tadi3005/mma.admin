@@ -11,7 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.mma.admin.domains.Event;
 import org.helmo.mma.admin.domains.repository.CalendarRepository;
+import org.helmo.mma.admin.domains.reservation.ReservationRequest;
 import org.helmo.mma.admin.infrastructures.mapper.EventMapper;
+import org.helmo.mma.admin.infrastructures.mapper.ReservationRequestMapper;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,6 +28,7 @@ public class IcalCalendarRepository implements CalendarRepository {
     private static final Logger LOGGER = LogManager.getLogger();
     private final String path;
     private final EventMapper eventMapper;
+    private final ReservationRequestMapper reservationRequestMapper;
 
     public IcalCalendarRepository(String path) {
         if (Files.notExists(Paths.get(path))) {
@@ -33,6 +36,7 @@ public class IcalCalendarRepository implements CalendarRepository {
         }
         this.path = path;
         this.eventMapper = new EventMapper();
+        this.reservationRequestMapper = new ReservationRequestMapper();
     }
 
     /**
@@ -77,5 +81,23 @@ public class IcalCalendarRepository implements CalendarRepository {
             return List.of();
         }
         return events;
+    }
+
+    @Override
+    public void addReservation(ReservationRequest reservationRequest) {
+        try (var reader = Files.newBufferedReader(Paths.get(path))) {
+            CalendarBuilder builder = new CalendarBuilder();
+            Calendar calendar = builder.build(reader);
+
+            VEvent event = reservationRequestMapper.toVEvent(reservationRequest);
+            calendar.add(event);
+
+            try (var writer = Files.newBufferedWriter(Paths.get(path))) {
+                CalendarOutputter outputter = new CalendarOutputter();
+                outputter.output(calendar, writer);
+            }
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while adding a reservation to the iCal file: {}", e.getMessage());
+        }
     }
 }

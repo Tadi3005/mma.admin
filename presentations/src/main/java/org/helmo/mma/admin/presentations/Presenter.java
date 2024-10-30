@@ -70,14 +70,17 @@ public class Presenter {
                 view.ask("Entrez la description: "),
                 askAndConvert("Entrez le nombre de participants: ", new IntConverter())
         );
+        calendar.loadCalendar(date, calendarRepository.findEventsAt(reservationRequest.date()));
         ReservationStatus status = calendar.addReservation(reservationRequest);
+
         if (status == ReservationStatus.SUCCESS) {
-            view.display("Reservation ajoutee avec succes");
-            //calendarRepository.addReservation(reservationRequest);
+            view.display("Reservation ajoutee avec succes\n");
+            calendarRepository.addReservation(reservationRequest);
+            loadCalendar(reservationRequest.date());
         } else {
-            view.display("Impossible d'ajouter la réservation: " + status);
+            view.display("Impossible d'ajouter la réservation: " + status.getMessage() + "\n");
+            loadCalendar(date);
         }
-        loadCalendar(date);
     }
 
     /**

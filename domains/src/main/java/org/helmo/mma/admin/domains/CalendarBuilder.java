@@ -20,7 +20,7 @@ public class CalendarBuilder {
 
     private void buildHeader() {
         StringBuilder header = new StringBuilder();
-        header.append("\n|Salle|");
+        header.append("|Salle|");
         for (int i = WorkingDateSlots.START_DAY.getHour(); i < WorkingDateSlots.END_DAY.getHour(); i++) {
             header.append(String.format("%02d", i)).append("h|").append(String.format("%3s", " ")).append("|");
         }

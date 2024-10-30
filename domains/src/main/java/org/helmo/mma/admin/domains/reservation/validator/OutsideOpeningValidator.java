@@ -8,12 +8,13 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.util.List;
 
-public class RoomAvailabilityValidator implements ReservationValidator {
+public class OutsideOpeningValidator implements ReservationValidator {
+
     @Override
     public ReservationStatus validate(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room) {
-        if (workingDateSlots.isAvailable(reservationRequest.start(), reservationRequest.end())) {
-            return ReservationStatus.SUCCESS;
+        if (reservationRequest.start().isBefore(WorkingDateSlots.START_DAY) || reservationRequest.end().isAfter(WorkingDateSlots.END_DAY)) {
+            return ReservationStatus.OUTSIDE_OPENING;
         }
-        return ReservationStatus.ROOM_NOT_AVAILABLE;
+        return ReservationStatus.SUCCESS;
     }
 }

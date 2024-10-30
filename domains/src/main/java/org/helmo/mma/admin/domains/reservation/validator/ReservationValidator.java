@@ -11,5 +11,5 @@ import java.util.Map;
 
 @FunctionalInterface
 public interface ReservationValidator {
-    ReservationStatus validate(ReservationRequest reservationRequest, Map<Room, WorkingDateSlots> roomWorkingDateSlots, List<User> users, List<Room> rooms);
+    ReservationStatus validate(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room);
 }
