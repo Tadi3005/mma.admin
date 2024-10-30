@@ -7,14 +7,22 @@ import org.helmo.mma.admin.domains.User;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Mapper to convert an iCal event to a domain event.
+ */
 public class EventMapper {
+    /**
+     * Convert an iCal event to a domain event.
+     * @param icalEventDto the iCal event
+     * @return the domain event
+     */
     public Event toEvent(VEvent icalEventDto) {
         String uuid = getUuid(icalEventDto);
         String organizer = getOrganizer(icalEventDto);
         LocalDate date = getDate(icalEventDto);
         LocalTime start = getStart(icalEventDto);
         LocalTime end = getEnd(icalEventDto);
-        String description = getDescription(icalEventDto);
+        String description = getSummary(icalEventDto);
         String location = getLocation(icalEventDto);
         return new Event(uuid, date, start, end, description, new User(organizer), location);
     }
@@ -23,8 +31,8 @@ public class EventMapper {
         return icalEventDto.getLocation().isPresent() ? icalEventDto.getLocation().get().getValue() : "Lieu inconnu";
     }
 
-    private static String getDescription(VEvent icalEventDto) {
-        return icalEventDto.getDescription().isPresent() ? icalEventDto.getDescription().get().getValue() : "Description inconnue";
+    private static String getSummary(VEvent icalEventDto) {
+        return icalEventDto.getSummary().isPresent() ? icalEventDto.getSummary().get().getValue() : "Description inconnue";
     }
 
     private static LocalTime getEnd(VEvent icalEventDto) {

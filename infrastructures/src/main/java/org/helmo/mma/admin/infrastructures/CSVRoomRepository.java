@@ -8,16 +8,25 @@ import org.helmo.mma.admin.infrastructures.dto.CSVRoomDto;
 import org.helmo.mma.admin.infrastructures.mapper.RoomMapper;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Repository to access the rooms from a CSV file.
+ */
 public class CSVRoomRepository implements RoomRepository {
     private static final Logger LOGGER = LogManager.getLogger();
     private final String path;
     private final RoomMapper roomMapper;
 
+    /**
+     * Create a room repository with a path to a CSV file.
+     * @param path the path to the CSV file
+     * @throws FileNotFoundException if the file does not exist
+     */
     public CSVRoomRepository(String path) throws FileNotFoundException {
         if (!Files.exists(Paths.get(path))) {
             LOGGER.error("The file {} does not exist", path);
@@ -27,6 +36,10 @@ public class CSVRoomRepository implements RoomRepository {
         this.roomMapper = new RoomMapper();
     }
 
+    /**
+     * Find all the rooms.
+     * @return the rooms
+     */
     @Override
     public List<Room> findAll() {
         try (var reader = Files.newBufferedReader(Path.of(path))) {
@@ -38,8 +51,8 @@ public class CSVRoomRepository implements RoomRepository {
                         return roomMapper.toRoom(roomDto);
                     })
                     .toList();
-        } catch (Exception e) {
-            LOGGER.error("An error occurred while reading the file {}", path, e); // TODO: Ne pas renvoyer une liste vide en cas d'erreur
+        } catch (IOException e) {
+            LOGGER.error("An error occurred while reading the file {}", path, e);
             return List.of();
         }
     }

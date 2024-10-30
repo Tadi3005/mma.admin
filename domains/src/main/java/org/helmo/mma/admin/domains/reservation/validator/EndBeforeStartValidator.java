@@ -8,6 +8,9 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.util.List;
 
+/**
+ * Validator to check if the end date is before the start date.
+ */
 public class EndBeforeStartValidator implements ReservationValidator {
 
     @Override

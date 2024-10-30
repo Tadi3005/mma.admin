@@ -10,8 +10,16 @@ import org.helmo.mma.admin.domains.reservation.ReservationRequest;
 
 import java.time.LocalDateTime;
 
+/**
+ * Mapper to convert a reservation request to an iCal event.
+ */
 public class ReservationRequestMapper {
 
+    /**
+     * Convert a reservation request to an iCal event.
+     * @param reservationRequest the reservation request
+     * @return the iCal event
+     */
     public VEvent toVEvent(ReservationRequest reservationRequest) {
         LocalDateTime start = LocalDateTime.of(reservationRequest.date(), reservationRequest.start());
         LocalDateTime end = LocalDateTime.of(reservationRequest.date(), reservationRequest.end());

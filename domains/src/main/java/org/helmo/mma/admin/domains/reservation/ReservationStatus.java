@@ -2,6 +2,9 @@ package org.helmo.mma.admin.domains.reservation;
 
 import org.helmo.mma.admin.domains.WorkingDateSlots;
 
+/**
+ * Status of the reservation.
+ */
 public enum ReservationStatus {
     ROOM_NOT_FOUND("La salle n'existe pas"),
     SUCCESS("La réservation a été effectuée avec succès"),
@@ -15,10 +18,18 @@ public enum ReservationStatus {
 
     private final String message;
 
+    /**
+     * Create a new ReservationStatus.
+     * @param message The message of the status.
+     */
     ReservationStatus(String message) {
         this.message = message;
     }
 
+    /**
+     * Get the message of the status.
+     * @return The message of the status.
+     */
     public String getMessage() {
         return message;
     }

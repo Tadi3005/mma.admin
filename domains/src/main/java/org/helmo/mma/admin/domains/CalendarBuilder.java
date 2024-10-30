@@ -2,16 +2,23 @@ package org.helmo.mma.admin.domains;
 
 import java.util.Map;
 
+/**
+ * Builder to create a calendar.
+ */
 public class CalendarBuilder {
     private final Map<Room, WorkingDateSlots> roomWorkingDateSlots;
     private String calendar;
 
+    /**
+     * Create a calendar builder with a map of rooms and working date slots.
+     * @param roomWorkingDateSlots the map of rooms and working date slots
+     */
     public CalendarBuilder(Map<Room, WorkingDateSlots> roomWorkingDateSlots) {
         this.roomWorkingDateSlots = roomWorkingDateSlots;
         this.calendar = "";
     }
 
-    public void build() {
+    private void build() {
         this.buildHeader();
         for (Room room : roomWorkingDateSlots.keySet()) {
             this.buildLineOf(room);

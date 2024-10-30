@@ -24,17 +24,24 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository to access the calendar from an iCal file.
+ */
 public class IcalCalendarRepository implements CalendarRepository {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final String path;
+    private final Path path;
     private final EventMapper eventMapper;
     private final ReservationRequestMapper reservationRequestMapper;
 
+    /**
+     * Create a calendar repository with a path to an iCal file.
+     * @param path the path to the iCal file
+     */
     public IcalCalendarRepository(String path) {
-        if (Files.notExists(Paths.get(path))) {
+        this.path = Paths.get(path);
+        if (Files.notExists(this.path)) {
             createIcalFile(path);
         }
-        this.path = path;
         this.eventMapper = new EventMapper();
         this.reservationRequestMapper = new ReservationRequestMapper();
     }
@@ -66,7 +73,7 @@ public class IcalCalendarRepository implements CalendarRepository {
     @Override
     public List<Event> findEventsAt(LocalDate date) {
         List<Event> events = new ArrayList<>();
-        try (var reader = Files.newBufferedReader(Paths.get(path))) {
+        try (var reader = Files.newBufferedReader(this.path)) {
             CalendarBuilder builder = new CalendarBuilder();
             Calendar calendar = builder.build(reader);
 
@@ -82,19 +89,23 @@ public class IcalCalendarRepository implements CalendarRepository {
             LOGGER.error("An error occurred while reading the iCal file: {}", e.getMessage());
             return List.of();
         }
-        return events;
+         return events;
     }
 
+    /**
+     * Add a reservation to the iCal file
+     * @param reservationRequest the reservation request
+     */
     @Override
     public void addReservation(ReservationRequest reservationRequest) {
-        try (var reader = Files.newBufferedReader(Paths.get(path))) {
+        try (var reader = Files.newBufferedReader(this.path)) {
             CalendarBuilder builder = new CalendarBuilder();
             Calendar calendar = builder.build(reader);
 
             VEvent event = reservationRequestMapper.toVEvent(reservationRequest);
             calendar.add(event);
 
-            try (var writer = Files.newBufferedWriter(Paths.get(path))) {
+            try (var writer = Files.newBufferedWriter(this.path)) {
                 CalendarOutputter outputter = new CalendarOutputter();
                 outputter.output(calendar, writer);
             }

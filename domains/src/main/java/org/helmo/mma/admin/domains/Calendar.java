@@ -52,11 +52,8 @@ public class Calendar {
 
             events.stream()
                     .filter(event -> event.hasSame(room))
+                    .peek(room::addEvent)
                     .forEach(workingDateSlots::fillSlot);
-
-            events.stream()
-                    .filter(event -> event.hasSame(room))
-                    .forEach(room::addEvent);
 
             roomWorkingDateSlots.put(room, workingDateSlots);
         }
@@ -82,5 +79,30 @@ public class Calendar {
      */
     public Map<Room, WorkingDateSlots> getRoomWorkingDateSlots() {
         return roomWorkingDateSlots;
+    }
+
+    /**
+     * Find an event in the calendar
+     * @param searchReservationRequest the search reservation request
+     * @return the event found or Event.NOT_FOUND
+     */
+    public Event findEvent(SearchReservationRequest searchReservationRequest) {
+        Room room = rooms.stream().filter(r -> r.getId().equals(searchReservationRequest.roomId())).findFirst().orElse(Room.NOT_FOUND);
+        if (room == Room.NOT_FOUND) {
+            return Event.NOT_FOUND;
+        }
+        return room.findEventAt(searchReservationRequest.date(), searchReservationRequest.hour());
+    }
+
+    /**
+     * Find a user by its matricule
+     * @param user the user to find
+     * @return the user found or User.NOT_FOUND
+     */
+    public User findUser(User user) {
+        return users.stream()
+                .filter(u -> u.matricule().equals(user.email()) || u.matricule().equals(user.matricule()))
+                .findFirst()
+                .orElse(User.NOT_FOUND);
     }
 }

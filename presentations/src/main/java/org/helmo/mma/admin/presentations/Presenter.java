@@ -15,11 +15,22 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.time.LocalDate;
 
+/**
+ * The presenter of the application.
+ */
 public class Presenter {
     private final CalendarRepository calendarRepository;
     private final View view;
     private final Calendar calendar;
 
+    /**
+     * Create a presenter with a view, repositories, and a reservation service.
+     * @param view the view
+     * @param calendarRepository the calendar repository
+     * @param roomRepository the room repository
+     * @param userRepository the user repository
+     * @param reservationService the reservation service
+     */
     public Presenter(View view, CalendarRepository calendarRepository, RoomRepository roomRepository, UserRepository userRepository, ReservationService reservationService) {
         this.view = view;
         this.calendarRepository = calendarRepository;
@@ -44,20 +55,42 @@ public class Presenter {
         view.display(calendarBuilder.getCalendar());
         view.display("1. Changer de date");
         view.display("2. Encodage d'un reservation");
-        view.display("3. Quitter");
+        view.display("3. Consulter une réservation");
+        view.display("4. Quitter");
         handleMenu(date, askAndConvert("Votre choix: ", new IntConverter()));
     }
 
     private void handleMenu(LocalDate date, int choice) {
         switch (choice) {
             case 1 -> loadCalendar(askAndConvert("Entrez la nouvelle date (yyyy-MM-dd): ", new DateConverter()));
-            case 2 -> this.enterReservation(date);
-            case 3 -> view.display("Quitter");
+            case 2 -> enterReservation(date);
+            case 3 -> consultReservation(date);
+            case 4 -> view.display("Quitter");
             default -> {
                 view.display("Choix invalide");
                 displayDailyCalendar(date);
             }
         }
+    }
+
+    private void consultReservation(LocalDate date) {
+        LocalDate reservationDate = askAndConvert("Entrez la date de la réservation (yyyy-MM-dd): ", new DateConverter());
+        SearchReservationRequest searchReservationRequest = new SearchReservationRequest(
+                reservationDate,
+                view.ask("Entrez l'id de la salle: "),
+                askAndConvert("Entrez l'heure de la réservation (hh:mm): ", new LocalTimeConverter()));
+        calendar.loadCalendar(reservationDate, calendarRepository.findEventsAt(reservationDate));
+        Event event = calendar.findEvent(searchReservationRequest);
+        if (event == Event.NOT_FOUND) {
+            view.display("Aucune réservation trouvée\n");
+        } else {
+            view.display("Salle : " + event.location());
+            view.display("Date : " + event.date() + " "  + event.start() + "-" + event.end());
+            view.display("Description : " + event.description());
+            User user = calendar.findUser(event.organizer());
+            view.display("Organisateur : " + user.fullName() + "\n");
+        }
+        loadCalendar(date);
     }
 
     private void enterReservation(LocalDate date) {

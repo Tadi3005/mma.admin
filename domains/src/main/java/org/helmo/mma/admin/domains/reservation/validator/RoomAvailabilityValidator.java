@@ -8,6 +8,9 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.util.List;
 
+/**
+ * Validator to check if the room is available.
+ */
 public class RoomAvailabilityValidator implements ReservationValidator {
     @Override
     public ReservationStatus validate(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room) {

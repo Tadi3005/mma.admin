@@ -9,6 +9,9 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Validator to check if the reservation is in the past.
+ */
 public class PastReservationValidator implements ReservationValidator{
     @Override
     public ReservationStatus validate(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room) {

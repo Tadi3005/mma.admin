@@ -12,11 +12,19 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Repository to access the users from a CSV file.
+ */
 public class CSVUserRepository implements UserRepository {
     private static final Logger LOGGER = LogManager.getLogger();
     private final String path;
     private final UserMapper userMapper;
 
+    /**
+     * Create a user repository with a path to a CSV file.
+     * @param path the path to the CSV file
+     * @throws FileNotFoundException if the file does not exist
+     */
     public CSVUserRepository(String path) throws FileNotFoundException {
         if (!Files.exists(Paths.get(path))) {
             LOGGER.error("The file {} does not exist", path);
@@ -26,6 +34,10 @@ public class CSVUserRepository implements UserRepository {
         this.userMapper = new UserMapper();
     }
 
+    /**
+     * Find all the users.
+     * @return the users
+     */
     @Override
     public List<User> findAll() {
         try (var reader = Files.newBufferedReader(Paths.get(path))) {
@@ -38,7 +50,7 @@ public class CSVUserRepository implements UserRepository {
                     })
                     .toList();
         } catch (Exception e) {
-            LOGGER.error("An error occurred while reading the file {}", path, e); // TODO: Ne pas renvoyer une liste vide en cas d'erreur
+            LOGGER.error("An error occurred while reading the file {}", path, e);
             return List.of();
         }
     }

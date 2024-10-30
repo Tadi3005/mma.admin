@@ -8,6 +8,9 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.util.List;
 
+/**
+ * Validator to check if the reservation is outside the opening hours.
+ */
 public class OutsideOpeningValidator implements ReservationValidator {
 
     @Override

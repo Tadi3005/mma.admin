@@ -9,6 +9,9 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Validator to check if the user id is valid.
+ */
 public class UserIdValidator implements ReservationValidator {
     @Override
     public ReservationStatus validate(ReservationRequest reservationRequest, WorkingDateSlots workingDateSlots, List<User> users, Room room) {
