@@ -5,12 +5,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * The slots of a working date
  */
-public class WorkingDateSlots implements Iterable<Slot> {
+public class WorkingDateSlots {
     private final LocalDate date;
     private final List<Slot> slots;
     public static final LocalTime START_DAY = LocalTime.of(8, 0);
@@ -65,14 +66,17 @@ public class WorkingDateSlots implements Iterable<Slot> {
         return slots.stream().noneMatch(slot -> slot.isBetween(start, end) && !slot.isFree());
     }
 
-    /**
-     * Get the date of the day
-     * @return the date of the day
-     */
-    @Override
-    public Iterator<Slot> iterator() {
-        return slots.iterator();
+    public List<Slot> getAvailableSlots() {
+        List<Slot> availableSlots = new LinkedList<>();
+        for (Slot slot : slots) {
+            if (slot.isFree()) {
+                availableSlots.add(slot);
+            }
+        }
+        return availableSlots;
     }
 
-
+    public LocalDate getDate() {
+        return date;
+    }
 }

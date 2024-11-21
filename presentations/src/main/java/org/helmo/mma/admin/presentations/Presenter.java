@@ -1,19 +1,18 @@
 package org.helmo.mma.admin.presentations;
 
 import org.helmo.mma.admin.domains.*;
-import org.helmo.mma.admin.domains.converter.Converter;
-import org.helmo.mma.admin.domains.converter.DateConverter;
-import org.helmo.mma.admin.domains.converter.IntConverter;
-import org.helmo.mma.admin.domains.converter.LocalTimeConverter;
+import org.helmo.mma.admin.domains.Calendar;
+import org.helmo.mma.admin.domains.converter.*;
 import org.helmo.mma.admin.domains.exception.ConversionException;
 import org.helmo.mma.admin.domains.repository.CalendarRepository;
-import org.helmo.mma.admin.domains.repository.RoomRepository;
-import org.helmo.mma.admin.domains.repository.UserRepository;
 import org.helmo.mma.admin.domains.reservation.ReservationRequest;
-import org.helmo.mma.admin.domains.reservation.ReservationService;
 import org.helmo.mma.admin.domains.reservation.ReservationStatus;
+import org.helmo.mma.admin.domains.roomavailibility.RoomAvailabilityProposal;
+import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityRequest;
+import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityService;
 
 import java.time.LocalDate;
+import java.util.*;
 
 /**
  * The presenter of the application.
@@ -22,19 +21,19 @@ public class Presenter {
     private final CalendarRepository calendarRepository;
     private final View view;
     private final Calendar calendar;
+    private final SearchRoomAvailabilityService searchRoomAvailabilityService;
 
     /**
      * Create a presenter with a view, repositories, and a reservation service.
      * @param view the view
      * @param calendarRepository the calendar repository
-     * @param roomRepository the room repository
-     * @param userRepository the user repository
-     * @param reservationService the reservation service
+     * @param calendar the calendar
      */
-    public Presenter(View view, CalendarRepository calendarRepository, RoomRepository roomRepository, UserRepository userRepository, ReservationService reservationService) {
+    public Presenter(View view, CalendarRepository calendarRepository, Calendar calendar, SearchRoomAvailabilityService searchRoomAvailabilityService) {
         this.view = view;
         this.calendarRepository = calendarRepository;
-        this.calendar = new Calendar(roomRepository.findAll(), userRepository.findAll(), reservationService);
+        this.calendar = calendar;
+        this.searchRoomAvailabilityService = searchRoomAvailabilityService;
     }
 
     /**
@@ -56,7 +55,8 @@ public class Presenter {
         view.display("1. Changer de date");
         view.display("2. Encodage d'un reservation");
         view.display("3. Consulter une réservation");
-        view.display("4. Quitter");
+        view.display("4. Rechercher une salle disponible");
+        view.display("5. Quitter");
         handleMenu(date, askAndConvert("Votre choix: ", new IntConverter()));
     }
 
@@ -65,13 +65,33 @@ public class Presenter {
             case 1 -> loadCalendar(askAndConvert("Entrez la nouvelle date (yyyy-MM-dd): ", new DateConverter()));
             case 2 -> enterReservation(date);
             case 3 -> consultReservation(date);
-            case 4 -> view.display("Quitter");
+            case 4 -> searchRoomAvailability(date);
+            case 5 -> view.display("Quitter");
             default -> {
                 view.display("Choix invalide");
                 displayDailyCalendar(date);
             }
         }
     }
+
+    private void searchRoomAvailability(LocalDate date) {
+        LocalDate dateSearchRoom = askAndConvert("Entrez la date de la recherche (yyyy-MM-dd): ", new DateConverter());
+        SearchRoomAvailabilityRequest searchRoomAvailabilityRequest = new SearchRoomAvailabilityRequest(
+                dateSearchRoom,
+                askAndConvert("Entrez le nombre de participants: ", new IntConverter()),
+                askAndConvert("Entrez une durée (heures:minutes): ", new DurationConverter(":"))
+        );
+        Map<LocalDate, Map<Room, WorkingDateSlots>> calendars = new HashMap<>();
+        for (int i = 0; i < SearchRoomAvailabilityService.NUMBER_OF_DAYS; i++) {
+            LocalDate currentDate = dateSearchRoom.plusDays(i);
+            calendar.loadCalendar(currentDate, calendarRepository.findEventsAt(currentDate));
+            calendars.put(currentDate, new HashMap<>(calendar.getRoomWorkingDateSlots()));
+        }
+        List<RoomAvailabilityProposal> proposals = searchRoomAvailabilityService.searchRoomAvailability(calendars, searchRoomAvailabilityRequest);
+
+        loadCalendar(date);
+    }
+
 
     private void consultReservation(LocalDate date) {
         LocalDate reservationDate = askAndConvert("Entrez la date de la réservation (yyyy-MM-dd): ", new DateConverter());

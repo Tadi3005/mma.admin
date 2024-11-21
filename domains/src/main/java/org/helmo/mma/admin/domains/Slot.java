@@ -1,6 +1,7 @@
 package org.helmo.mma.admin.domains;
 
 import java.time.LocalTime;
+import java.time.temporal.Temporal;
 
 /**
  * A slot of a working date
@@ -52,5 +53,9 @@ public class Slot {
      */
     public boolean isBetween(LocalTime start, LocalTime end) {
         return this.start.isBefore(end) && this.end.isAfter(start);
+    }
+
+    public LocalTime getEnd() {
+        return end;
     }
 }

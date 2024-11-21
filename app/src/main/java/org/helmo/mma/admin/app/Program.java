@@ -2,11 +2,13 @@ package org.helmo.mma.admin.app;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.mma.admin.domains.Calendar;
 import org.helmo.mma.admin.domains.repository.CalendarRepository;
 import org.helmo.mma.admin.domains.repository.RoomRepository;
 import org.helmo.mma.admin.domains.repository.UserRepository;
 import org.helmo.mma.admin.domains.reservation.ReservationService;
 import org.helmo.mma.admin.domains.reservation.validator.*;
+import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityService;
 import org.helmo.mma.admin.infrastructures.CSVRoomRepository;
 import org.helmo.mma.admin.infrastructures.CSVUserRepository;
 import org.helmo.mma.admin.infrastructures.IcalCalendarRepository;
@@ -29,7 +31,9 @@ public class Program {
             CalendarRepository calendarRepository = new IcalCalendarRepository(directory + "calendar.ics");
             List<ReservationValidator> reservationValidators = initReservationValidators();
             ReservationService reservationService = new ReservationService(reservationValidators);
-            Presenter presenter = new Presenter(view, calendarRepository, roomRepository, userRepository, reservationService);
+            Calendar calendar = new Calendar(roomRepository.findAll(), userRepository.findAll(), reservationService);
+            SearchRoomAvailabilityService searchRoomAvailabilityService = new SearchRoomAvailabilityService();
+            Presenter presenter = new Presenter(view, calendarRepository, calendar, searchRoomAvailabilityService);
             presenter.start();
         } catch (Exception e) {
             LOGGER.error("An error occurred", e);

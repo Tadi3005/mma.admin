@@ -5,9 +5,7 @@ import org.helmo.mma.admin.domains.reservation.ReservationService;
 import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The calendar of the application
@@ -37,14 +35,10 @@ public class Calendar {
      * @param events the events of the calendar
      */
     public void loadCalendar(LocalDate date, List<Event> events) {
+        roomWorkingDateSlots.clear();
         fillSlotsWithEventsAt(date, events);
     }
 
-    /**
-     * Fill the slots of the rooms with events
-     * @param date the date of the events
-     * @param events the events to fill the slots with
-     */
     private void fillSlotsWithEventsAt(LocalDate date, List<Event> events) {
         for (Room room : rooms) {
             WorkingDateSlots workingDateSlots = new WorkingDateSlots(date);
@@ -74,14 +68,6 @@ public class Calendar {
     }
 
     /**
-     * Get the room working date slots
-     * @return the room working date slots
-     */
-    public Map<Room, WorkingDateSlots> getRoomWorkingDateSlots() {
-        return roomWorkingDateSlots;
-    }
-
-    /**
      * Find an event in the calendar
      * @param searchReservationRequest the search reservation request
      * @return the event found or Event.NOT_FOUND
@@ -104,5 +90,9 @@ public class Calendar {
                 .filter(u -> u.matricule().equals(user.email()) || u.matricule().equals(user.matricule()))
                 .findFirst()
                 .orElse(User.NOT_FOUND);
+    }
+
+    public Map<Room, WorkingDateSlots> getRoomWorkingDateSlots() {
+        return roomWorkingDateSlots;
     }
 }

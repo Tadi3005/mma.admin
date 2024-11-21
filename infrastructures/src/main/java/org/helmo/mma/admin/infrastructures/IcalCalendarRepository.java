@@ -92,6 +92,28 @@ public class IcalCalendarRepository implements CalendarRepository {
          return events;
     }
 
+    @Override
+    public List<Event> findEventsBetween(LocalDate date, LocalDate endDate) {
+        List<Event> events = new ArrayList<>();
+        try (var reader = Files.newBufferedReader(this.path)) {
+            CalendarBuilder builder = new CalendarBuilder();
+            Calendar calendar = builder.build(reader);
+
+            for (Object component : calendar.getComponents()) {
+                if (component instanceof VEvent) {
+                    Event event = eventMapper.toEvent((VEvent) component);
+                    if (event.date().isAfter(date) && event.date().isBefore(endDate)) {
+                        events.add(event);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while reading the iCal file: {}", e.getMessage());
+            return List.of();
+        }
+        return events;
+    }
+
     /**
      * Add a reservation to the iCal file
      * @param reservationRequest the reservation request
