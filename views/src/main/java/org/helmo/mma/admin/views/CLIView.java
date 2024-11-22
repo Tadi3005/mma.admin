@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.mma.admin.presentations.View;
 
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -54,6 +55,28 @@ public class CLIView implements View {
     @Override
     public void display(String message) {
         System.out.println(message);
+    }
+
+    @Override
+    public void displayCalendar(String[] hours, Map<String, Boolean[]> roomsOccupation) {
+        System.out.print("|Salle|");
+        for (String hour: hours) {
+            String hourFormat = "%-3s";
+            String formattedHour = String.format(hourFormat, hour.length() == 1 ? "0" + hour : hour);
+            System.out.print(formattedHour + "|   |");
+        }
+        System.out.println();
+        for (Map.Entry<String, Boolean[]> entry: roomsOccupation.entrySet()) {
+            System.out.print("|" + formatRoomId(entry.getKey()) + "|");
+            for (Boolean value: entry.getValue()) {
+                System.out.print(value ? "   |" : " X |");
+            }
+            System.out.println();
+        }
+    }
+
+    private String formatRoomId(String roomId) {
+        return String.format("%-" + 5 + "s", roomId.substring(0, Math.min(roomId.length(), 5)));
     }
 
     /**

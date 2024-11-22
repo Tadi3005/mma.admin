@@ -1,5 +1,8 @@
 package org.helmo.mma.admin.presentations;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents the view of the application
  */
@@ -10,6 +13,7 @@ public interface View {
      */
     void display(String message);
 
+    void displayCalendar(String[] header, Map<String, Boolean[]> data);
     /**
      * To display an error message
      * @param message the error message to display

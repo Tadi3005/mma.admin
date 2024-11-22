@@ -66,16 +66,6 @@ public class WorkingDateSlots {
         return slots.stream().noneMatch(slot -> slot.isBetween(start, end) && !slot.isFree());
     }
 
-    public List<Slot> getAvailableSlots() {
-        List<Slot> availableSlots = new LinkedList<>();
-        for (Slot slot : slots) {
-            if (slot.isFree()) {
-                availableSlots.add(slot);
-            }
-        }
-        return availableSlots;
-    }
-
     public LocalDate getDate() {
         return date;
     }

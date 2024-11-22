@@ -1,4 +1,4 @@
-package org.helmo.mma.admin.domains.converter;
+package org.helmo.mma.admin.presentations.converter;
 
 import org.helmo.mma.admin.domains.exception.ConversionException;
 

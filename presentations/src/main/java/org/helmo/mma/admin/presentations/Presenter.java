@@ -2,7 +2,6 @@ package org.helmo.mma.admin.presentations;
 
 import org.helmo.mma.admin.domains.*;
 import org.helmo.mma.admin.domains.Calendar;
-import org.helmo.mma.admin.domains.converter.*;
 import org.helmo.mma.admin.domains.exception.ConversionException;
 import org.helmo.mma.admin.domains.repository.CalendarRepository;
 import org.helmo.mma.admin.domains.reservation.ReservationRequest;
@@ -10,6 +9,8 @@ import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 import org.helmo.mma.admin.domains.roomavailibility.ScoredProposal;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityRequest;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityService;
+import org.helmo.mma.admin.presentations.converter.*;
+import org.helmo.mma.admin.presentations.viewmodel.CalendarViewModel;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -50,8 +51,8 @@ public class Presenter {
 
     private void displayDailyCalendar(LocalDate date) {
         view.display("Disponibilites des salles pour le " + date);
-        CalendarBuilder calendarBuilder = new CalendarBuilder(calendar.getRoomWorkingDateSlots());
-        view.display(calendarBuilder.getCalendar());
+        CalendarViewModel calendarViewModel = new CalendarViewModel(calendar.getRoomWorkingDateSlots());
+        view.displayCalendar(calendarViewModel.getHours(), calendarViewModel.getRoomOccupation());
         view.display("1. Changer de date");
         view.display("2. Encodage d'un reservation");
         view.display("3. Consulter une réservation");
