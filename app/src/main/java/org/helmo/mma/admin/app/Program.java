@@ -9,6 +9,7 @@ import org.helmo.mma.admin.domains.repository.UserRepository;
 import org.helmo.mma.admin.domains.reservation.ReservationService;
 import org.helmo.mma.admin.domains.reservation.validator.*;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityService;
+import org.helmo.mma.admin.domains.roomavailibility.search.*;
 import org.helmo.mma.admin.infrastructures.CSVRoomRepository;
 import org.helmo.mma.admin.infrastructures.CSVUserRepository;
 import org.helmo.mma.admin.infrastructures.IcalCalendarRepository;
@@ -24,20 +25,30 @@ public class Program {
 
     public static void main(String[] args) {
         try {
-            View view = new CLIView(args);
-            String directory = view.getDirectory();
+            View view = new CLIView(args, "dir");
+            String directory = view.getResource();
             UserRepository userRepository = new CSVUserRepository(directory + "users.csv");
             RoomRepository roomRepository = new CSVRoomRepository(directory + "rooms.csv");
             CalendarRepository calendarRepository = new IcalCalendarRepository(directory + "calendar.ics");
             List<ReservationValidator> reservationValidators = initReservationValidators();
             ReservationService reservationService = new ReservationService(reservationValidators);
             Calendar calendar = new Calendar(roomRepository.findAll(), userRepository.findAll(), reservationService);
-            SearchRoomAvailabilityService searchRoomAvailabilityService = new SearchRoomAvailabilityService();
+            List<ScoringStrategy> scoringStrategies = initScoringStrategies();
+            ScoreCalculator calculator = new ScoreCalculator(scoringStrategies);
+            SearchRoomAvailabilityService searchRoomAvailabilityService = new SearchRoomAvailabilityService(calculator);
             Presenter presenter = new Presenter(view, calendarRepository, calendar, searchRoomAvailabilityService);
             presenter.start();
         } catch (Exception e) {
             LOGGER.error("An error occurred", e);
         }
+    }
+
+    private static List<ScoringStrategy> initScoringStrategies() {
+        List<ScoringStrategy> scoringStrategies = new LinkedList<>();
+        scoringStrategies.add(new DateProximityStrategy());
+        scoringStrategies.add(new CapacityProximityStrategy());
+        scoringStrategies.add(new DurationProximityStrategy());
+        return scoringStrategies;
     }
 
     private static List<ReservationValidator> initReservationValidators() {

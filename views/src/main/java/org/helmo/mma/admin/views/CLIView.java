@@ -20,18 +20,18 @@ public class CLIView implements View {
      * Create a CLI view with the given arguments.
      * @param args the arguments
      */
-    public CLIView(String[] args) {
-        parseArgs(args);
+    public CLIView(String[] args, String option) {
+        parseArgs(args, option);
     }
 
-    private void parseArgs(String[] args) {
+    private void parseArgs(String[] args, String option) {
         OptionParser parser = new OptionParser();
         try {
-            parser.accepts("dir").withRequiredArg().ofType(String.class).describedAs("The directory containing the calendar file");
+            parser.accepts(option).withRequiredArg().ofType(String.class).describedAs("The directory containing the calendar file");
             OptionSet options = parser.parse(args);
 
-            if (options.has("dir")) {
-                this.directory = (String) options.valueOf("dir");
+            if (options.has(option)) {
+                this.directory = (String) options.valueOf(option);
             }
         } catch (Exception e) {
             LOGGER.error("An error occurred while parsing the arguments: {}", e.getMessage());
@@ -43,7 +43,7 @@ public class CLIView implements View {
      * @return the directory
      */
     @Override
-    public String getDirectory() {
+    public String getResource() {
         return directory;
     }
 

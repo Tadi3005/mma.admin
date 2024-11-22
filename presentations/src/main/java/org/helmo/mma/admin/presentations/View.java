@@ -27,5 +27,5 @@ public interface View {
      * To get the directory of files
      * @return the directory of files
      */
-    String getDirectory();
+    String getResource();
 }

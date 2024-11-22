@@ -7,7 +7,7 @@ import org.helmo.mma.admin.domains.exception.ConversionException;
 import org.helmo.mma.admin.domains.repository.CalendarRepository;
 import org.helmo.mma.admin.domains.reservation.ReservationRequest;
 import org.helmo.mma.admin.domains.reservation.ReservationStatus;
-import org.helmo.mma.admin.domains.roomavailibility.RoomAvailabilityProposal;
+import org.helmo.mma.admin.domains.roomavailibility.ScoredProposal;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityRequest;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityService;
 
@@ -81,15 +81,26 @@ public class Presenter {
                 askAndConvert("Entrez le nombre de participants: ", new IntConverter()),
                 askAndConvert("Entrez une durée (heures:minutes): ", new DurationConverter(":"))
         );
+        Map<LocalDate, Map<Room, WorkingDateSlots>> calendars = getCalendars(dateSearchRoom);
+        List<ScoredProposal> proposals = searchRoomAvailabilityService.searchRoomAvailability(calendars, searchRoomAvailabilityRequest);
+        for(int i = 0; i < proposals.size(); i++) {
+                ScoredProposal proposal = proposals.get(i);
+                view.display("Proposition " + (i + 1) + " :");
+                view.display("Salle : " + proposal.getRoom().getId());
+                view.display("Date : " + proposal.getDate() + " " + proposal.getStart() + "-" + proposal.getEnd());
+                view.display("Capacité : " + proposal.getRoom().getCapacity() + "\n");
+        }
+        loadCalendar(date);
+    }
+
+    private Map<LocalDate, Map<Room, WorkingDateSlots>> getCalendars(LocalDate dateSearchRoom) {
         Map<LocalDate, Map<Room, WorkingDateSlots>> calendars = new HashMap<>();
         for (int i = 0; i < SearchRoomAvailabilityService.NUMBER_OF_DAYS; i++) {
             LocalDate currentDate = dateSearchRoom.plusDays(i);
             calendar.loadCalendar(currentDate, calendarRepository.findEventsAt(currentDate));
             calendars.put(currentDate, new HashMap<>(calendar.getRoomWorkingDateSlots()));
         }
-        List<RoomAvailabilityProposal> proposals = searchRoomAvailabilityService.searchRoomAvailability(calendars, searchRoomAvailabilityRequest);
-
-        loadCalendar(date);
+        return calendars;
     }
 
 
