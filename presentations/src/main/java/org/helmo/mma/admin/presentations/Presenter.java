@@ -3,12 +3,12 @@ package org.helmo.mma.admin.presentations;
 import org.helmo.mma.admin.domains.*;
 import org.helmo.mma.admin.domains.Calendar;
 import org.helmo.mma.admin.domains.exception.ConversionException;
-import org.helmo.mma.admin.domains.repository.CalendarRepository;
 import org.helmo.mma.admin.domains.reservation.ReservationRequest;
 import org.helmo.mma.admin.domains.reservation.ReservationStatus;
 import org.helmo.mma.admin.domains.roomavailibility.ScoredProposal;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityRequest;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityService;
+import org.helmo.mma.admin.domains.service.CalendarService;
 import org.helmo.mma.admin.presentations.converter.*;
 import org.helmo.mma.admin.presentations.viewmodel.CalendarViewModel;
 
@@ -19,7 +19,7 @@ import java.util.*;
  * The presenter of the application.
  */
 public class Presenter {
-    private final CalendarRepository calendarRepository;
+    private final CalendarService calendarRepository;
     private final View view;
     private final Calendar calendar;
     private final SearchRoomAvailabilityService searchRoomAvailabilityService;
@@ -30,7 +30,7 @@ public class Presenter {
      * @param calendarRepository the calendar repository
      * @param calendar the calendar
      */
-    public Presenter(View view, CalendarRepository calendarRepository, Calendar calendar, SearchRoomAvailabilityService searchRoomAvailabilityService) {
+    public Presenter(View view, CalendarService calendarRepository, Calendar calendar, SearchRoomAvailabilityService searchRoomAvailabilityService) {
         this.view = view;
         this.calendarRepository = calendarRepository;
         this.calendar = calendar;
