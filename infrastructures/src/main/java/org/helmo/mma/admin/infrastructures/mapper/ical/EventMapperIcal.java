@@ -1,4 +1,4 @@
-package org.helmo.mma.admin.infrastructures.mapper;
+package org.helmo.mma.admin.infrastructures.mapper.ical;
 
 import net.fortuna.ical4j.model.component.VEvent;
 import org.helmo.mma.admin.domains.Event;
@@ -10,7 +10,7 @@ import java.time.LocalTime;
 /**
  * Mapper to convert an iCal event to a domain event.
  */
-public class EventMapper {
+public class EventMapperIcal {
     /**
      * Convert an iCal event to a domain event.
      * @param icalEventDto the iCal event
@@ -22,9 +22,14 @@ public class EventMapper {
         LocalDate date = getDate(icalEventDto);
         LocalTime start = getStart(icalEventDto);
         LocalTime end = getEnd(icalEventDto);
-        String description = getSummary(icalEventDto);
+        String summary = getSummary(icalEventDto);
+        String description = getDescription(icalEventDto);
         String location = getLocation(icalEventDto);
-        return new Event(uuid, date, start, end, description, new User(organizer), location);
+        return new Event(uuid, date, start, end, summary, description, new User(organizer), location);
+    }
+
+    private String getDescription(VEvent icalEventDto) {
+        return icalEventDto.getDescription().isPresent() ? icalEventDto.getDescription().get().getValue() : "Description inconnue";
     }
 
     private static String getLocation(VEvent icalEventDto) {

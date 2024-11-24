@@ -15,14 +15,6 @@ public interface CalendarDao {
     List<Event> findEventsAt(LocalDate date);
 
     /**
-     * Find the events between two dates.
-     * @param date the start date
-     * @param endDate the end date
-     * @return the events
-     */
-    List<Event> findEventsBetween(LocalDate date, LocalDate endDate);
-
-    /**
      * Add a reservation.
      * @param reservationRequest the reservation request
      */

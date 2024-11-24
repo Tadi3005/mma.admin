@@ -1,4 +1,4 @@
-package org.helmo.mma.admin.infrastructures.mapper;
+package org.helmo.mma.admin.infrastructures.mapper.ical;
 
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Location;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 /**
  * Mapper to convert a reservation request to an iCal event.
  */
-public class ReservationRequestMapper {
+public class ReservationRequestMapperIcal {
 
     /**
      * Convert a reservation request to an iCal event.

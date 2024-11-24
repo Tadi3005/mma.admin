@@ -28,7 +28,7 @@ public class CLIView implements View {
     private void parseArgs(String[] args, String option) {
         OptionParser parser = new OptionParser();
         try {
-            parser.accepts(option).withRequiredArg().ofType(String.class).describedAs("The directory containing the calendar file");
+            parser.accepts(option).withRequiredArg().ofType(String.class).describedAs("to specify the resource");
             OptionSet options = parser.parse(args);
 
             if (options.has(option)) {

@@ -1,18 +1,15 @@
 package org.helmo.mma.admin.infrastructures.mapper;
 
 import org.helmo.mma.admin.domains.User;
-import org.helmo.mma.admin.infrastructures.dto.CSVUserDto;
+import org.helmo.mma.admin.infrastructures.dto.MySqlUserDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
-/**
- * Mapper to convert a CSV user DTO to a user.
- */
-public class UserMapper {
-    /**
-     * Convert a CSV user DTO to a user.
-     * @param userDto the CSV user DTO
-     * @return the user
-     */
-    public User toUser(CSVUserDto userDto) {
-        return new User(userDto.matricule(), userDto.fullName(), userDto.email());
-    }
+@Mapper
+public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
+    MySqlUserDto toMySqlUserDto(User user);
+
+    User toUser(MySqlUserDto mySqlUserDto);
 }

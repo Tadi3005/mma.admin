@@ -13,8 +13,8 @@ import java.time.LocalTime;
  * @param organizer the organizer of the event
  * @param location the location of the event
  */
-public record Event (String id, LocalDate date, LocalTime start, LocalTime end, String description, User organizer, String location) {
-    public static final Event NOT_FOUND = new Event("NOT_FOUND", LocalDate.now(), LocalTime.now(), LocalTime.now(), "NOT_FOUND", new User("event@notfound"), "NOT_FOUND");
+public record Event (String id, LocalDate date, LocalTime start, LocalTime end, String summary, String description, User organizer, String location) {
+    public static final Event NOT_FOUND = new Event("NOT_FOUND", LocalDate.now(), LocalTime.now(), LocalTime.now(), "NOT_FOUND", "NOT_FOUND", new User("NOT_FOUND", "NOT_FOUND","event@notfound"), "NOT_FOUND");
 
     /**
      * Checks if the event is in the same location as the given room.

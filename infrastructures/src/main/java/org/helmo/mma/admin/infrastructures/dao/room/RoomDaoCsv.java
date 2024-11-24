@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.mma.admin.domains.Room;
 import org.helmo.mma.admin.domains.dao.RoomDao;
-import org.helmo.mma.admin.infrastructures.dto.CSVRoomDto;
-import org.helmo.mma.admin.infrastructures.mapper.RoomMapper;
+import org.helmo.mma.admin.infrastructures.dto.csv.CSVRoomDto;
+import org.helmo.mma.admin.infrastructures.mapper.csv.RoomMapperCsv;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,17 +17,21 @@ import java.util.List;
 public class RoomDaoCsv implements RoomDao {
     private static final Logger LOGGER = LogManager.getLogger();
     private final String path;
-    private final RoomMapper roomMapper;
+    private final RoomMapperCsv roomMapper;
 
     /**
      * Create a room repository with a path to a CSV file.
      * @param path the path to the CSV file
      * @throws FileNotFoundException if the file does not exist
      */
-    public RoomDaoCsv(String path, RoomMapper mapper) throws FileNotFoundException {
-        if (!Files.exists(Paths.get(path))) {
-            LOGGER.error("The file {} does not exist", path);
-            throw new FileNotFoundException("The file " + path + " does not exist");
+    public RoomDaoCsv(String path, RoomMapperCsv mapper) {
+        try {
+            if (!Files.exists(Paths.get(path))) {
+                LOGGER.error("The file {} does not exist", path);
+                throw new FileNotFoundException("The file " + path + " does not exist");
+            }
+        } catch (FileNotFoundException e) {
+            LOGGER.error("An error occurred while creating the file {}", path);
         }
         this.path = path;
         this.roomMapper = mapper;

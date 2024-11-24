@@ -12,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.mma.admin.domains.Event;
 import org.helmo.mma.admin.domains.dao.CalendarDao;
 import org.helmo.mma.admin.domains.reservation.ReservationRequest;
-import org.helmo.mma.admin.infrastructures.mapper.EventMapper;
-import org.helmo.mma.admin.infrastructures.mapper.ReservationRequestMapper;
+import org.helmo.mma.admin.infrastructures.mapper.ical.EventMapperIcal;
+import org.helmo.mma.admin.infrastructures.mapper.ical.ReservationRequestMapperIcal;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -27,14 +27,14 @@ import java.util.List;
 public class CalendarDaoIcal implements CalendarDao {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Path path;
-    private final EventMapper eventMapper;
-    private final ReservationRequestMapper reservationRequestMapper;
+    private final EventMapperIcal eventMapper;
+    private final ReservationRequestMapperIcal reservationRequestMapper;
 
     /**
      * Create a calendar repository with a path to an iCal file.
      * @param path the path to the iCal file
      */
-    public CalendarDaoIcal(String path, EventMapper eventMapper, ReservationRequestMapper reservationRequestMapper) {
+    public CalendarDaoIcal(String path, EventMapperIcal eventMapper, ReservationRequestMapperIcal reservationRequestMapper) {
         this.path = Paths.get(path);
         if (Files.notExists(this.path)) {
             createIcalFile(path);
@@ -78,28 +78,6 @@ public class CalendarDaoIcal implements CalendarDao {
                 if (component instanceof VEvent) {
                     Event event = eventMapper.toEvent((VEvent) component);
                     if (event.date().isEqual(date)) {
-                        events.add(event);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.error("An error occurred while reading the iCal file: {}", e.getMessage());
-            return List.of();
-        }
-        return events;
-    }
-
-    @Override
-    public List<Event> findEventsBetween(LocalDate date, LocalDate endDate) {
-        List<Event> events = new ArrayList<>();
-        try (var reader = Files.newBufferedReader(this.path)) {
-            CalendarBuilder builder = new CalendarBuilder();
-            Calendar calendar = builder.build(reader);
-
-            for (Object component : calendar.getComponents()) {
-                if (component instanceof VEvent) {
-                    Event event = eventMapper.toEvent((VEvent) component);
-                    if (event.date().isAfter(date) && event.date().isBefore(endDate)) {
                         events.add(event);
                     }
                 }

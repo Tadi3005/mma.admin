@@ -1,8 +1,9 @@
 package org.helmo.mma.admin.infrastructures.factory;
 
+import org.helmo.mma.admin.domains.storage.DataStorageFactory;
 import org.helmo.mma.admin.infrastructures.storage.FileDataStorage;
 
-public class FileDataStorageFactory {
+public class FileDataStorageFactory implements DataStorageFactory {
 
     private final String path;
 
@@ -10,11 +11,8 @@ public class FileDataStorageFactory {
         this.path = path;
     }
 
+    @Override
     public FileDataStorage createDataStorage() {
-        try {
-            return new FileDataStorage(path);
-        } catch (Exception e) {
-            throw new RuntimeException("An error occurred while creating the data storage", e);
-        }
+        return new FileDataStorage(path);
     }
 }

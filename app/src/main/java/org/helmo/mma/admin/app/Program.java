@@ -3,19 +3,17 @@ package org.helmo.mma.admin.app;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.mma.admin.domains.Calendar;
-import org.helmo.mma.admin.domains.repository.CalendarRepository;
 import org.helmo.mma.admin.domains.reservation.ReservationService;
 import org.helmo.mma.admin.domains.reservation.validator.*;
 import org.helmo.mma.admin.domains.roomavailibility.SearchRoomAvailabilityService;
 import org.helmo.mma.admin.domains.roomavailibility.search.*;
 import org.helmo.mma.admin.domains.service.CalendarService;
-import org.helmo.mma.admin.infrastructures.IcalCalendarRepository;
+import org.helmo.mma.admin.domains.storage.DataStorageFactory;
 import org.helmo.mma.admin.infrastructures.factory.FileDataStorageFactory;
 import org.helmo.mma.admin.infrastructures.factory.SQLDataSorageFactory;
 import org.helmo.mma.admin.infrastructures.service.MmaCalendarService;
 import org.helmo.mma.admin.infrastructures.service.RoomService;
 import org.helmo.mma.admin.infrastructures.service.UserService;
-import org.helmo.mma.admin.infrastructures.storage.FileDataStorage;
 import org.helmo.mma.admin.presentations.Presenter;
 import org.helmo.mma.admin.presentations.View;
 import org.helmo.mma.admin.views.CLIView;
@@ -28,10 +26,9 @@ public class Program {
 
     public static void main(String[] args) {
         try {
-            View view = new CLIView(args, "dir");
+            View view = new CLIView(args, "db");
             String resource = view.getResource();
-
-            FileDataStorageFactory fileDataStorage = new FileDataStorageFactory(resource);
+            DataStorageFactory fileDataStorage = new SQLDataSorageFactory(resource);
             UserService userService = new UserService(fileDataStorage.createDataStorage());
             RoomService roomService = new RoomService(fileDataStorage.createDataStorage());
             CalendarService calendarService = new MmaCalendarService(fileDataStorage.createDataStorage());

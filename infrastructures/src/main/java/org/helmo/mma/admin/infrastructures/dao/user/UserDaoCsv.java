@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.mma.admin.domains.User;
 import org.helmo.mma.admin.domains.dao.UserDao;
-import org.helmo.mma.admin.infrastructures.dto.CSVUserDto;
-import org.helmo.mma.admin.infrastructures.mapper.UserMapper;
+import org.helmo.mma.admin.infrastructures.dto.csv.CSVUserDto;
+import org.helmo.mma.admin.infrastructures.mapper.csv.UserMapperCsv;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -16,12 +16,16 @@ public class UserDaoCsv implements UserDao {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final String path;
-    private final UserMapper userMapper;
+    private final UserMapperCsv userMapper;
 
-    public UserDaoCsv(String path, UserMapper userMapper) throws FileNotFoundException {
-        if (!Files.exists(Paths.get(path))) {
-            LOGGER.error("The file {} does not exist", path);
-            throw new FileNotFoundException("The file " + path + " does not exist");
+    public UserDaoCsv(String path, UserMapperCsv userMapper) {
+        try {
+            if (!Files.exists(Paths.get(path))) {
+                LOGGER.error("The file {} does not exist", path);
+                throw new FileNotFoundException("The file " + path + " does not exist");
+            }
+        } catch (FileNotFoundException e) {
+            LOGGER.error("An error occurred while creating the file {}", path);
         }
         this.path = path;
         this.userMapper = userMapper;

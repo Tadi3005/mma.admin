@@ -10,6 +10,7 @@ import java.time.LocalTime;
  * @param date the date of the reservation
  * @param start the start time of the reservation
  * @param end the end time of the reservation
+    * @param summary the summary of the reservation
  * @param description the description of the reservation
  * @param numberOfParticipants the number of participants
  */
@@ -18,6 +19,7 @@ public record ReservationRequest(String idRoom,
                                  LocalDate date,
                                  LocalTime start,
                                  LocalTime end,
+                                 String summary,
                                  String description,
                                  int numberOfParticipants)
 {

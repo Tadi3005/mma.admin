@@ -118,6 +118,7 @@ public class Presenter {
         } else {
             view.display("Salle : " + event.location());
             view.display("Date : " + event.date() + " "  + event.start() + "-" + event.end());
+            view.display("Résumé : " + event.summary());
             view.display("Description : " + event.description());
             User user = calendar.findUser(event.organizer());
             view.display("Organisateur : " + user.fullName() + "\n");
@@ -132,6 +133,7 @@ public class Presenter {
                 askAndConvert("Entrez le jour de la réservation (yyyy-MM-dd): ", new DateConverter()),
                 askAndConvert("Entrez l'heure de début (hh:mm): ", new LocalTimeConverter()),
                 askAndConvert("Entrez l'heure de fin (hh:mm): ", new LocalTimeConverter()),
+                view.ask("Entrez le résumé: "),
                 view.ask("Entrez la description: "),
                 askAndConvert("Entrez le nombre de participants: ", new IntConverter())
         );

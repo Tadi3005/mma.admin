@@ -7,10 +7,10 @@ import org.helmo.mma.admin.domains.dao.RoomDao;
 import org.helmo.mma.admin.infrastructures.dao.room.RoomDaoCsv;
 import org.helmo.mma.admin.domains.dao.UserDao;
 import org.helmo.mma.admin.infrastructures.dao.user.UserDaoCsv;
-import org.helmo.mma.admin.infrastructures.mapper.EventMapper;
-import org.helmo.mma.admin.infrastructures.mapper.ReservationRequestMapper;
-import org.helmo.mma.admin.infrastructures.mapper.RoomMapper;
-import org.helmo.mma.admin.infrastructures.mapper.UserMapper;
+import org.helmo.mma.admin.infrastructures.mapper.ical.EventMapperIcal;
+import org.helmo.mma.admin.infrastructures.mapper.ical.ReservationRequestMapperIcal;
+import org.helmo.mma.admin.infrastructures.mapper.csv.RoomMapperCsv;
+import org.helmo.mma.admin.infrastructures.mapper.csv.UserMapperCsv;
 
 public class FileDataStorage implements DataStorage {
     private final UserDao userDao;
@@ -18,13 +18,9 @@ public class FileDataStorage implements DataStorage {
     private final CalendarDao calendarDao;
 
     public FileDataStorage(String path) {
-        try {
-            this.userDao = new UserDaoCsv(path + "users.csv", new UserMapper());
-            this.roomDao = new RoomDaoCsv(path + "rooms.csv", new RoomMapper());
-            this.calendarDao = new CalendarDaoIcal(path + "calendar.ics", new EventMapper(), new ReservationRequestMapper());
-        } catch (Exception e) {
-            throw new RuntimeException("An error occurred while creating the data storage", e);
-        }
+        this.userDao = new UserDaoCsv(path + "users.csv", new UserMapperCsv());
+        this.roomDao = new RoomDaoCsv(path + "rooms.csv", new RoomMapperCsv());
+        this.calendarDao = new CalendarDaoIcal(path + "calendar.ics", new EventMapperIcal(), new ReservationRequestMapperIcal());
     }
 
     @Override
